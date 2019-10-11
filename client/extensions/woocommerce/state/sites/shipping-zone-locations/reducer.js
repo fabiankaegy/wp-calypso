@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_DELETED,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST,
@@ -12,18 +9,8 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
 } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
-import { createReducer } from 'state/utils';
 
-const reducers = {};
-
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST ] = ( state, { zoneId } ) => {
-	return {
-		...state,
-		[ zoneId ]: LOADING,
-	};
-};
-
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS ] = ( state, { data, zoneId } ) => {
+function buildLocations( data = [] ) {
 	const locations = {
 		continent: [],
 		country: [],
@@ -31,42 +18,53 @@ reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS ] = ( state, { dat
 		postcode: [],
 	};
 	data.forEach( ( { type, code } ) => locations[ type ].push( code ) );
-	return {
-		...state,
-		[ zoneId ]: locations,
-	};
-};
+	return locations;
+}
 
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED ] = (
-	state,
-	{ data, originatingAction: { zoneId } }
-) => {
-	return reducers[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS ]( state, { data, zoneId } );
-};
+export default function( state = {}, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST:
+			return {
+				...state,
+				[ action.zoneId ]: LOADING,
+			};
 
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_UPDATED ] = (
-	state,
-	{ data, originatingAction: { zone } }
-) => {
-	if ( 'number' === typeof zone.id ) {
-		return state;
+		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS: {
+			return {
+				...state,
+				[ action.zoneId ]: buildLocations( action.data ),
+			};
+		}
+
+		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED:
+			return {
+				...state,
+				[ action.originatingActio.zoneId ]: buildLocations( action.data ),
+			};
+
+		case WOOCOMMERCE_SHIPPING_ZONE_UPDATED: {
+			const {
+				originatingAction: { zone },
+			} = action;
+			if ( 'number' === typeof zone.id ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ action.data.id ]: buildLocations(),
+			};
+		}
+
+		case WOOCOMMERCE_SHIPPING_ZONE_DELETED: {
+			const {
+				originatingAction: { zone },
+			} = action;
+			const newState = { ...state };
+			delete newState[ zone.id ];
+			return newState;
+		}
 	}
 
-	return {
-		...state,
-		[ data.id ]: {
-			continent: [],
-			country: [],
-			state: [],
-			postcode: [],
-		},
-	};
-};
-
-reducers[ WOOCOMMERCE_SHIPPING_ZONE_DELETED ] = ( state, { originatingAction: { zone } } ) => {
-	const newState = { ...state };
-	delete newState[ zone.id ];
-	return newState;
-};
-
-export default createReducer( {}, reducers );
+	return state;
+}
