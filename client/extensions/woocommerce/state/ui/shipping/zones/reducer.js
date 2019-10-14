@@ -1,15 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { every, isEmpty, isEqual, omit, pick, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_ADD,
 	WOOCOMMERCE_SHIPPING_ZONE_CANCEL,
@@ -33,23 +29,109 @@ export const initialState = {
 	currentlyEditingId: null,
 };
 
-const reducer = {};
+function mainReducer( state = initialState, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SHIPPING_ZONE_ADD:
+			// The action of "adding" a zone must not alter the edits, since the user can cancel the zone edit later
+			return {
+				...state,
+				currentlyEditingId: nextBucketIndex( state.creates ),
+				currentlyEditingChanges: {
+					// Always reset the current changes
+					methods: methodsInitialState,
+					locations: locationsInitialState,
+				},
+			};
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_ADD ] = state => {
-	const id = nextBucketIndex( state.creates );
-	// The action of "adding" a zone must not alter the edits, since the user can cancel the zone edit later
-	return reducer[ WOOCOMMERCE_SHIPPING_ZONE_OPEN ]( state, { id } );
-};
+		case WOOCOMMERCE_SHIPPING_ZONE_CANCEL:
+			// "Canceling" editing a zone is equivalent at "closing" it without any changes
+			return handleShippingZoneClose( {
+				...state,
+				currentlyEditingChanges: {},
+			} );
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_CANCEL ] = state => {
-	// "Canceling" editing a zone is equivalent at "closing" it without any changes
-	return reducer[ WOOCOMMERCE_SHIPPING_ZONE_CLOSE ]( {
-		...state,
-		currentlyEditingChanges: {},
-	} );
-};
+		case WOOCOMMERCE_SHIPPING_ZONE_CLOSE:
+			return handleShippingZoneClose( state );
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_CLOSE ] = state => {
+		case WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME:
+			if ( null === state.currentlyEditingId ) {
+				return state;
+			}
+			return {
+				...state,
+				currentlyEditingChanges: {
+					...state.currentlyEditingChanges,
+					name: action.name,
+				},
+			};
+
+		case WOOCOMMERCE_SHIPPING_ZONE_OPEN:
+			return {
+				...state,
+				currentlyEditingId: action.id,
+				currentlyEditingChanges: {
+					// Always reset the current changes
+					methods: methodsInitialState,
+					locations: locationsInitialState,
+				},
+			};
+
+		case WOOCOMMERCE_SHIPPING_ZONE_REMOVE: {
+			const { id } = action;
+			const newState = {
+				...state,
+				currentlyEditingId: null,
+			};
+
+			const bucket = getBucket( { id } );
+			if ( 'updates' === bucket ) {
+				// We only need to add it to the list of "zones to delete" if the zone was already present in the server
+				newState.deletes = [ ...state.deletes, { id } ];
+			}
+			// In any case, remove the zone edits from the bucket where they were
+			newState[ bucket ] = reject( state[ bucket ], { id } );
+
+			return newState;
+		}
+
+		case WOOCOMMERCE_SHIPPING_ZONE_UPDATED:
+			if ( action.originatingActionzone.id !== state.currentlyEditingId ) {
+				return state;
+			}
+
+			return {
+				...state,
+				currentlyEditingId: action.data.id,
+				currentlyEditingChanges: pick( state.currentlyEditingChanges, 'locations', 'methods' ),
+			};
+
+		case WOOCOMMERCE_SHIPPING_ZONE_DELETED:
+			if ( action.originatingAction.zone.id !== state.currentlyEditingId ) {
+				return state;
+			}
+
+			return {
+				...state,
+				currentlyEditingId: null,
+			};
+
+		case WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED:
+			if ( action.originatingAction.zoneId !== state.currentlyEditingId ) {
+				return state;
+			}
+			return {
+				...state,
+				currentlyEditingChanges: {
+					...state.currentlyEditingChanges,
+					locations: locationsInitialState,
+				},
+			};
+	}
+
+	return state;
+}
+
+function handleShippingZoneClose( state ) {
 	const { currentlyEditingChanges, currentlyEditingId } = state;
 	if ( null === currentlyEditingId ) {
 		return state;
@@ -91,91 +173,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_CLOSE ] = state => {
 		currentlyEditingId: null,
 		[ bucket ]: newBucket,
 	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME ] = ( state, { name } ) => {
-	if ( null === state.currentlyEditingId ) {
-		return state;
-	}
-	return {
-		...state,
-		currentlyEditingChanges: {
-			...state.currentlyEditingChanges,
-			name,
-		},
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_OPEN ] = ( state, { id } ) => {
-	return {
-		...state,
-		currentlyEditingId: id,
-		currentlyEditingChanges: {
-			// Always reset the current changes
-			methods: methodsInitialState,
-			locations: locationsInitialState,
-		},
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_REMOVE ] = ( state, { id } ) => {
-	const newState = {
-		...state,
-		currentlyEditingId: null,
-	};
-
-	const bucket = getBucket( { id } );
-	if ( 'updates' === bucket ) {
-		// We only need to add it to the list of "zones to delete" if the zone was already present in the server
-		newState.deletes = [ ...state.deletes, { id } ];
-	}
-	// In any case, remove the zone edits from the bucket where they were
-	newState[ bucket ] = reject( state[ bucket ], { id } );
-
-	return newState;
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_UPDATED ] = ( state, { data, originatingAction: { zone } } ) => {
-	if ( zone.id !== state.currentlyEditingId ) {
-		return state;
-	}
-
-	return {
-		...state,
-		currentlyEditingId: data.id,
-		currentlyEditingChanges: pick( state.currentlyEditingChanges, 'locations', 'methods' ),
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_DELETED ] = ( state, { originatingAction: { zone } } ) => {
-	if ( zone.id !== state.currentlyEditingId ) {
-		return state;
-	}
-
-	return {
-		...state,
-		currentlyEditingId: null,
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED ] = (
-	state,
-	{ originatingAction: { zoneId } }
-) => {
-	if ( zoneId !== state.currentlyEditingId ) {
-		return state;
-	}
-
-	return {
-		...state,
-		currentlyEditingChanges: {
-			...state.currentlyEditingChanges,
-			locations: locationsInitialState,
-		},
-	};
-};
-
-const mainReducer = createReducer( initialState, reducer );
+}
 
 export default ( state, action ) => {
 	const newState = mainReducer( state, action );
