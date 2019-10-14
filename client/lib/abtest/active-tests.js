@@ -152,6 +152,7 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+
 	verticalSuggestedThemes: {
 		datestamp: '20191011',
 		variations: {
@@ -160,5 +161,15 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
+	},
+	checkoutPaymentTypes: {
+		datestamp: '20191021',
+		variations: {
+			tabs: 50,
+			radios: 50,
+		},
+		defaultVariation: 'tabs',
+		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 };
