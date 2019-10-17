@@ -18,6 +18,8 @@ import {
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
+	DOMAIN_CONTACT_INFO_DISCLOSE,
+	DOMAIN_CONTACT_INFO_REDACT,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/domains/privacy/index.js';
@@ -148,6 +150,22 @@ export function enableDomainPrivacy( siteId, domain ) {
 export function disableDomainPrivacy( siteId, domain ) {
 	return {
 		type: DOMAIN_PRIVACY_DISABLE,
+		siteId,
+		domain,
+	};
+}
+
+export function discloseDomainContactInfo( siteId, domain ) {
+	return {
+		type: DOMAIN_CONTACT_INFO_DISCLOSE,
+		siteId,
+		domain,
+	};
+}
+
+export function redactDomainContactInfo( siteId, domain ) {
+	return {
+		type: DOMAIN_CONTACT_INFO_REDACT,
 		siteId,
 		domain,
 	};
