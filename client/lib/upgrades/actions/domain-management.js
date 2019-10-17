@@ -376,33 +376,6 @@ export function cancelTransferRequest( options, onComplete ) {
 	} );
 }
 
-export function enablePrivacyProtection( domainName, onComplete ) {
-	wpcom.enablePrivacyProtection( domainName, error => {
-		if ( error ) {
-			onComplete( error );
-			return;
-		}
-
-		Dispatcher.handleServerAction( {
-			type: PRIVACY_PROTECTION_ENABLE_COMPLETED,
-			domainName,
-		} );
-
-		onComplete( null );
-	} );
-}
-
-export function disablePrivacyProtection( domainName, onComplete ) {
-	wpcom.disablePrivacyProtection( domainName, error => {
-		if ( error ) {
-			onComplete( error );
-			return;
-		}
-
-		onComplete( null );
-	} );
-}
-
 export function acceptTransfer( domainName, onComplete ) {
 	wpcom.acceptTransfer( domainName, error => {
 		if ( error ) {
