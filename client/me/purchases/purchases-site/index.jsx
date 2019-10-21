@@ -46,7 +46,6 @@ const PurchasesSite = ( {
 			<PurchaseItem
 				key={ purchase.id }
 				slug={ slug }
-				siteId={ siteId }
 				isDisconnectedSite={ ! site }
 				purchase={ purchase }
 				isJetpack={ isJetpack }
