@@ -52,7 +52,23 @@ class PurchasesList extends Component {
 	}
 
 	renderConciergeBanner() {
-		// 'schedule' ===
+		const { nextAppointment, scheduleId, hasAvailableConciergeSessions } = this.props;
+
+		let bannerType;
+
+		if ( nextAppointment ) {
+			bannerType = 'upcomingAppointment';
+		} else if ( hasAvailableConciergeSessions ) {
+			if ( 1 === scheduleId ) {
+				bannerType = 'availableIncludedSession';
+			} else if ( 2 === scheduleId ) {
+				bannerType = 'availablePurchasedSession';
+			}
+		} else {
+			bannerType = 'canPurchaseConcierge';
+		}
+
+		return <ConciergeBanner bannerType={ bannerType } />;
 	}
 
 	render() {
@@ -65,7 +81,7 @@ class PurchasesList extends Component {
 		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
 			content = (
 				<div>
-					{ this.props.isBusinessPlanUser && <ConciergeBanner /> }
+					{ this.renderConciergeBanner() }
 
 					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( site => (
 						<PurchasesSite
@@ -83,17 +99,22 @@ class PurchasesList extends Component {
 
 		if ( this.props.hasLoadedUserPurchasesFromServer && ! this.props.purchases.length ) {
 			content = (
-				<CompactCard className="purchases-list__no-content">
-					<EmptyContent
-						title={ this.props.translate( 'Looking to upgrade?' ) }
-						line={ this.props.translate(
-							'Our plans give your site the power to thrive. ' + 'Find the plan that works for you.'
-						) }
-						action={ this.props.translate( 'Upgrade Now' ) }
-						actionURL={ '/plans' }
-						illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
-					/>
-				</CompactCard>
+				<>
+					{ this.renderConciergeBanner() }
+
+					<CompactCard className="purchases-list__no-content">
+						<EmptyContent
+							title={ this.props.translate( 'Looking to upgrade?' ) }
+							line={ this.props.translate(
+								'Our plans give your site the power to thrive. ' +
+									'Find the plan that works for you.'
+							) }
+							action={ this.props.translate( 'Upgrade Now' ) }
+							actionURL={ '/plans' }
+							illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+						/>
+					</CompactCard>
+				</>
 			);
 		}
 
