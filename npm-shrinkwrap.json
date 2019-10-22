@@ -339,6 +339,11 @@
 			"version": "file:packages/calypso-color-schemes",
 			"dev": true
 		},
+		"@automattic/color-studio": {
+			"version": "2.2.0",
+			"resolved": "https://registry.npmjs.org/@automattic/color-studio/-/color-studio-2.2.0.tgz",
+			"integrity": "sha512-ttIF8rPSRJ5hKkDxKESDXyGmbqV3Eg4WCVUmKJp5BQXlbQOtwZ1EqUHmZo+IofXXpO2ngn2GiFz+KGt56C5WMA=="
+		},
 		"@automattic/components": {
 			"version": "file:packages/components",
 			"requires": {
@@ -348,11 +353,6 @@
 				"prop-types": "^15.7.2",
 				"react": "^16.8.3"
 			}
-		},
-		"@automattic/color-studio": {
-			"version": "2.2.0",
-			"resolved": "https://registry.npmjs.org/@automattic/color-studio/-/color-studio-2.2.0.tgz",
-			"integrity": "sha512-ttIF8rPSRJ5hKkDxKESDXyGmbqV3Eg4WCVUmKJp5BQXlbQOtwZ1EqUHmZo+IofXXpO2ngn2GiFz+KGt56C5WMA=="
 		},
 		"@automattic/composite-checkout": {
 			"version": "file:packages/composite-checkout",
@@ -15770,20 +15770,17 @@
 			}
 		},
 		"nock": {
-			"version": "10.0.6",
-			"resolved": "https://registry.npmjs.org/nock/-/nock-10.0.6.tgz",
-			"integrity": "sha512-b47OWj1qf/LqSQYnmokNWM8D88KvUl2y7jT0567NB3ZBAZFz2bWp2PC81Xn7u8F2/vJxzkzNZybnemeFa7AZ2w==",
+			"version": "11.5.0",
+			"resolved": "https://registry.npmjs.org/nock/-/nock-11.5.0.tgz",
+			"integrity": "sha512-gddqQKCzc2JM9WdNcAzuXNnYfc3S8eEG/3a4vqGRjA86glaKuWTVCRWwCaP2ZYdmPcaxy8uPgoEOKz7n/YreFA==",
 			"dev": true,
 			"requires": {
 				"chai": "^4.1.2",
 				"debug": "^4.1.0",
-				"deep-equal": "^1.0.0",
 				"json-stringify-safe": "^5.0.1",
-				"lodash": "^4.17.5",
+				"lodash": "^4.17.13",
 				"mkdirp": "^0.5.0",
-				"propagate": "^1.0.0",
-				"qs": "^6.5.1",
-				"semver": "^5.5.0"
+				"propagate": "^2.0.0"
 			},
 			"dependencies": {
 				"debug": {
@@ -19676,9 +19673,9 @@
 			}
 		},
 		"propagate": {
-			"version": "1.0.0",
-			"resolved": "https://registry.npmjs.org/propagate/-/propagate-1.0.0.tgz",
-			"integrity": "sha1-AMLa7t2iDofjeCs0Stuhzd1q1wk=",
+			"version": "2.0.1",
+			"resolved": "https://registry.npmjs.org/propagate/-/propagate-2.0.1.tgz",
+			"integrity": "sha512-vGrhOavPSTz4QVNuBNdcNXePNdNMaO1xj9yBeH1ScQPjk/rhg9sSlCXPhMkFuaNNW/syTvYqsnbIJxMBfRbbag==",
 			"dev": true
 		},
 		"proto-list": {
@@ -25245,6 +25242,21 @@
 					"resolved": "https://registry.npmjs.org/p-try/-/p-try-2.2.0.tgz",
 					"integrity": "sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==",
 					"dev": true
+				},
+				"qs": {
+					"version": "6.7.0",
+					"resolved": "https://registry.npmjs.org/qs/-/qs-6.7.0.tgz",
+					"integrity": "sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ==",
+					"dev": true
+				},
+				"rimraf": {
+					"version": "2.7.1",
+					"resolved": "https://registry.npmjs.org/rimraf/-/rimraf-2.7.1.tgz",
+					"integrity": "sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==",
+					"dev": true,
+					"requires": {
+						"glob": "^7.1.3"
+					}
 				},
 				"safe-buffer": {
 					"version": "5.1.2",
