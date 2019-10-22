@@ -16,7 +16,7 @@ interface Props {
 	toggleGeneralSidebar: () => void;
 }
 
-export function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
+export default function Header( { isEditorSidebarOpened, toggleGeneralSidebar }: Props ) {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
