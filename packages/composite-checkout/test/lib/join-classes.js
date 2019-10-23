@@ -4,24 +4,19 @@
 import joinClasses from '../../src/lib/join-classes';
 
 describe( 'joinClasses', function() {
-	it( 'Empty array', function() {
+	it( 'returns an empty string when passed an empty array', function() {
 		expect( joinClasses( [] ) ).toBe( '' );
 	} );
 
-	it( 'Singleton array', function() {
+	it( 'returns a single class when passed a singleton array', function() {
 		expect( joinClasses( [ 'foo' ] ) ).toBe( 'foo' );
 	} );
 
-	it( 'Doubleton array', function() {
+	it( 'returns two space-delimited classes when passed a doubleton array', function() {
 		expect( joinClasses( [ 'foo', 'bar' ] ) ).toBe( 'foo bar' );
 	} );
 
-	it( 'Number argument', function() {
-		expect( joinClasses( [ 27 ] ) ).toBe( '27' );
-	} );
-
-	// Should probably do some validation in joinClasses().
-	it( 'String argument', function() {
-		expect( () => joinClasses( 'foo' ) ).toThrow( 'classNames.filter is not a function' );
+	it( 'converts numeric arguments to strings', function() {
+		expect( joinClasses( [ 27, 0.1 ] ) ).toBe( '27 0.1' );
 	} );
 } );
