@@ -28,10 +28,10 @@ test( 'When we enter checkout, the line items and total are rendered', () => {
 				amount: { currency: 'USD', value: 5500, displayValue: '$55' },
 			} }
 			onSuccess={ () => {
-				console.log( 'Success :)' );
+				return;
 			} }
 			onFailure={ () => {
-				console.log( 'Failure :(' );
+				return;
 			} }
 			successRedirectUrl="#"
 			failureRedirectUrl="#"
