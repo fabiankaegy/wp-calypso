@@ -9,13 +9,14 @@ import React from 'react';
 import { registerPaymentMethod } from '../../lib/payment-methods';
 import { ApplePayBillingForm, ApplePaySubmitButton, ApplePayLabel } from './apple-pay';
 import CreditCardFields from '../../components/credit-card-fields';
+import BillingFields from '../../components/billing-fields';
 
 export default function loadPaymentMethods() {
 	registerPaymentMethod( {
 		id: 'apple-pay',
 		LabelComponent: ApplePayLabel,
 		PaymentMethodComponent: () => null,
-		BillingContactComponent: ApplePayBillingForm,
+		BillingContactComponent: BillingFields,
 		SubmitButtonComponent: ApplePaySubmitButton,
 	} );
 
